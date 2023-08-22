@@ -14,7 +14,10 @@ const location = useLocation();
                         </button>
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li className="nav-item"><Link className={` nav-link ${location.pathname === "/newsapp" ? "active" : ""} ` } to="/newsapp">Business</Link></li>
+                                <li className="nav-item">
+                                    <Link className={` nav-link ${location.pathname === "/" ? "active" : ""} ` } aria-current="page" to="/">General</Link>
+                                </li>
+                                <li className="nav-item"><Link className={` nav-link ${location.pathname === "/business" ? "active" : ""} ` } to="/business">Business</Link></li>
                                 <li className="nav-item"><Link className={` nav-link ${location.pathname === "/entertainment" ? "active" : ""} ` } to="/entertainment">Entertainment</Link></li>
                                 <li className="nav-item"><Link className={` nav-link ${location.pathname === "/health" ? "active" : ""} ` } to="/health">Health</Link></li>
                                 <li className="nav-item"><Link className={` nav-link ${location.pathname === "/science" ? "active" : ""} ` } to="/science">Science</Link></li>
