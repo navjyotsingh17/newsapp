@@ -9,9 +9,10 @@ import { useEffect } from 'react';
 const News = (props) => {
 
     //different states to set states
-    const [articles, setArticles] = useState([])
+    const [results, setResults] = useState([])
     const [loading, setLoading] = useState(true)
-    const [page, setPage] = useState(1)
+    // eslint-disable-next-line
+    const [page, setPage] = useState()
     const [totalResults, setTotalResults] = useState(0)
 
     //a function to capitalize the first letter of a string
@@ -23,13 +24,14 @@ const News = (props) => {
     const updateNews = async () => {
         props.setProgress(10);
         // in the below url value i have enterd back ticks so that i can write java script in it.
-        const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
+
+        const url = `https://newsdata.io/api/1/news?apikey=${props.apiKey}&country=${props.country}&category=${props.category}&language=en`;
         setLoading(true)
         let data = await fetch(url); // here we have to write await because its a async fuction this returns a promise so we have to wait for this promise to get resolved
         props.setProgress(30);
         let parsedData = await data.json()
         props.setProgress(70);
-        setArticles(parsedData.articles)
+        setResults(parsedData.results)
         setTotalResults(parsedData.totalResults)
         setLoading(false)
         props.setProgress(100);
@@ -38,20 +40,24 @@ const News = (props) => {
 
     // use effect method whenever the page changes it changes the document title based on the category and also updateNews method is called to render the news based on the news props category
     useEffect(() => {
-        document.title = `${capitalizeFirstLetter(props.category)} - NewsMonkey`;
+        document.title = `${capitalizeFirstLetter(props.category)} - NewsMonkey | Get your daily dose of news for free!`;
         updateNews();
         // eslint-disable-next-line
     }, []) // By providing an empty dependency array [], you are telling React that the effect has no dependencies and should only run once, when the component is initially rendered
 
-    // fetchMoreData is used for the infinite scroll feature so that when the user scrolls at the bottom of the page this method is called which concates more news with exsiting news on that page.
+
     const fetchMoreData = async () => {
-        const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page + 1}&pageSize=${props.pageSize}`;
-        setPage(page + 1)
+
+        // const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page + 1}&pageSize=${props.pageSize}`;
+
+        const url = `https://newsdata.io/api/1/news?apikey=${props.apiKey}&country=${props.country}&category=${props.category}&language=en&page=16910840741654c31472926c1c75034df5eda00381`;
+        setPage(results.nextPage)
         let data = await fetch(url);
         let parsedData = await data.json()
-        setArticles(articles.concat(parsedData.articles))
+        setResults(results.concat(parsedData.results))
         setTotalResults(parsedData.totalResults)
     };
+
 
     return (
         <>
@@ -63,20 +69,20 @@ const News = (props) => {
 
             {/* here in the InfiniteScroll tag i am setting the dataLength according to the articles parameter from the news API json response, then calling the fetchMoreData fuction to load more news, setting the hasMore variable comparing the articles parameter length from the API json reponse withe totalResults state */}
             <InfiniteScroll
-                dataLength={articles.length}
+                dataLength={results.length}
                 next={fetchMoreData}
-                hasMore={articles.length !== totalResults}
+                hasMore={results.length !== totalResults}
                 loader={<Spinner />}
             >
                 <div className="container">
 
                     <div className="row">
 
-                        {articles.map((element) => {
+                        {results.map((element) => {
                             // here the reason i have entered the key element as the url becoz the news url will be unique for each news
-                            return <div className="col-md-4" key={element.url}>
+                            return <div className="col-md-4" key={element.link}>
                                 {/* here i am mapping the different parameters of the articles array such as url, title, image url etc of the json response to a variable to the NewsItem component*/}
-                                <NewsItem title={element.title ? element.title : ""} description={element.description ? element.description : ""} imageUrl={element.urlToImage} newsUrl={element.url} author={element.author} date={element.publishedAt} source={element.source.name} />
+                                <NewsItem title={element.title ? element.title : ""} description={element.description ? element.description : ""} imageUrl={element.image_url} newsUrl={element.link} author={element.creator} date={element.pubDate} source={element.source_id} />
                             </div>
                         })}
                     </div>
@@ -94,7 +100,7 @@ export default News
 News.defaultProps = {
     country: 'in',
     pageSize: 8,
-    category: 'general',
+    category: 'businesss',
 }
 
 // here i have set the propstype of the props so appropiate datatypes gets passed to each props.

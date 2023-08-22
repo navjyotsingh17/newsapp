@@ -15,7 +15,7 @@ const NewsItem = (props) => {
                     right: "0"
                 }}>
                     {/* creating the badge component to display source of each news */}
-                    <span className="badge rounded-pill bg-danger"> {source}</span>
+                    <span className="badge rounded-pill bg-danger">{source}</span>
                 </div>
 
                 {/* setting the image of each news to some other image if the image of that particlar news is not present */}
