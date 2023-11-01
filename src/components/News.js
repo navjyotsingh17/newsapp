@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 const News = (props) => {
 
     //different states to set states
-    const [results, setResults] = useState([])
+    const [articles, setArticles] = useState([])
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(1)
     const [totalarticles, setTotalarticles] = useState(0)
@@ -65,7 +65,7 @@ const News = (props) => {
 
             {/* here in the InfiniteScroll tag i am setting the dataLength according to the articles parameter from the news API json response, then calling the fetchMoreData fuction to load more news, setting the hasMore variable comparing the articles parameter length from the API json reponse withe totalarticles state */}
             <InfiniteScroll
-                dataLength={results.length}
+                dataLength={articles.length}
                 next={fetchMoreData}
                 hasMore={articles.length !== totalarticles}
                 loader={<Spinner />}
@@ -74,11 +74,11 @@ const News = (props) => {
 
                     <div className="row">
 
-                        {results.map((element) => {
+                        {articles.map((element) => {
                             // here the reason i have entered the key element as the url becoz the news url will be unique for each news
-                            return <div className="col-md-4" key={element.link}>
+                            return <div className="col-md-4" key={element.url}>
                                 {/* here i am mapping the different parameters of the articles array such as url, title, image url etc of the json response to a variable to the NewsItem component*/}
-                                <NewsItem title={element.title ? element.title : ""} description={element.description ? element.description : ""} imageUrl={element.image_url} newsUrl={element.link} author={element.creator} date={element.pubDate} source={element.source_id} />
+                                <NewsItem title={element.title ? element.title : ""} description={element.description ? element.description : ""} imageUrl={element.urlToImage} newsUrl={element.url} author={element.author} date={element.publishedAt} source={element.source.name} />
                             </div>
                         })}
                     </div>
